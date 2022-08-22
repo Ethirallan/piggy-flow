@@ -15,6 +15,8 @@ services:
       MYSQL_PASSWORD: ${MYSQL_USER_PASS}
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       MYSQL_DATABASE: ${MYSQL_DATABASE} 
+      TZ: ${MYSQL_TIMEZONE} 
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
     networks:
       - internal
 
