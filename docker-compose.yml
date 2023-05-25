@@ -20,26 +20,12 @@ services:
     networks:
       - internal
 
-  pma:
-    container_name: piggy_flow_pma
-    image: phpmyadmin/phpmyadmin
-    restart: unless-stopped
-    depends_on:
-      - db
-    ports:
-      - 8080:80
-    networks:
-      - external
-      - internal
-
   api:
     container_name: piggy_flow_api
     build:
       context: .
       dockerfile: Dockerfile
       target: ${NODE_ENV}
-    volumes:
-      - ./backend/:/usr/src/app
     command: npm run start:dev
     depends_on:
       - db
