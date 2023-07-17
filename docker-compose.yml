@@ -6,10 +6,9 @@ services:
     image: mariadb:10.3
     restart: unless-stopped
     volumes:
-      - ./db:/var/lib/mysql
+      - piggy_flow_data:/var/lib/mysql
     environment:
-      MYSQL_ROOT_HOST: "%"
-      MYSQL_HOST: "%"
+      MYSQL_HOST: ${MYSQL_HOST}
       MYSQL_PORT: ${MYSQL_PORT}
       MYSQL_USER: ${MYSQL_USER}
       MYSQL_PASSWORD: ${MYSQL_USER_PASS}
@@ -17,6 +16,11 @@ services:
       MYSQL_DATABASE: ${MYSQL_DATABASE} 
       TZ: ${MYSQL_TIMEZONE} 
     command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
     networks:
       - internal
 
@@ -26,7 +30,6 @@ services:
       context: .
       dockerfile: Dockerfile
       target: ${NODE_ENV}
-    command: npm run start:dev
     depends_on:
       - db
     ports:
@@ -40,3 +43,6 @@ networks:
     external: true
   internal:
     external: false
+
+volumes:
+  piggy_flow_data:
