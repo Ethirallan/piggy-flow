@@ -12,9 +12,9 @@ services:
     networks:
       - external
       - internal
-  api:
-    volumes:
-      - ./backend/:/usr/src/app
+  # api:
+  #   volumes:
+  #     - ./backend/:/app
 
 networks:
   external:

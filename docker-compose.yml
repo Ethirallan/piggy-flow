@@ -34,6 +34,8 @@ services:
       - db
     ports:
       - ${PORT}:3000
+    volumes:
+      - ./uploads:/app/uploads
     networks:
       - external
       - internal
