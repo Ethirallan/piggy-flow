@@ -1,30 +1,30 @@
+# Base stage
+FROM node:18-alpine AS base
+RUN npm i -g pnpm @nestjs/cli
+
 # Development stage
-FROM node:14-alpine AS development
-
+FROM base AS development
 WORKDIR /app
+COPY backend ./
+CMD pnpm install && pnpm run start:dev
 
-COPY backend/package*.json ./
-
-RUN npm i
-
-COPY backend .
-
-CMD ["npm", "run", "start:dev"]
+# Dependencies stage
+FROM base AS dependencies
+WORKDIR /app
+COPY backend/package.json backend/pnpm-lock.yaml ./
+RUN pnpm install
 
 # Build stage
-FROM development AS build
-
-RUN npm run build
+FROM base AS build
+WORKDIR /app
+COPY backend .
+COPY --from=dependencies /app/node_modules ./node_modules
+RUN pnpm run build
+RUN pnpm prune --prod
 
 # Production stage
-FROM node:14-alpine AS production
-
+FROM base AS production
 WORKDIR /app
-
-COPY backend/package*.json ./
-
-RUN npm i --only=production
-
-COPY --from=build /app/dist ./dist
-
+COPY --from=build /app/dist/ ./dist/
+COPY --from=build /app/node_modules ./node_modules
 CMD ["node", "dist/main"]

@@ -12,9 +12,11 @@ services:
     networks:
       - external
       - internal
-  # api:
-  #   volumes:
-  #     - ./backend/:/app
+  api:
+    build:
+      target: development
+    volumes:
+      - ./backend/:/app
 
 networks:
   external:
